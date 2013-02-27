@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block body %}
+	<!-- If the user is selected, allow them to switch users ("logout") -->
+	{% if 'username' in session %}
+		<ul class="nav nav-tabs">
+	        <li class="active">
+	            <a href="#">Workout</a>
+	        </li>
+	        <li>
+	            <a href="{{ url_for('weighin') }}">Weigh-in</a>
+	        </li>
+    	</ul>
+        {% for workout in workouts %}
+        {% else %}
+            <p>No workouts yet!
+        {% endfor %}
+        <dt>
+        	View workout history
+        	<dd><br>
+        	<dd><select id="refresh_list">
+        		{% for exercise in exercises %}
+        			<option>{{exercise.name}}</option>
+        		{% endfor %}
+        		</select>
+        	<dd><button id="refresh_button">Refresh Chart</button>
+        </dt>
+        <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+        <h4><a href="{{url_for('workout')}}">Record Workout</a></h4><br>
+    <!-- If no user is selected, allow them to "login" -->
+	{% else %}
+		<h2>Login</h2>
+		<form action="{{url_for('index')}}" method="post">
+			<dt>Username: 
+	    	<dd><input type=text name=username /><br>
+	    	<dt>Password: 
+            <dd><input type=password name=password /><br>
+	      	<dd><input type=submit value=Go />
+		</form>
+		<p>New user? Click <a href="{{ url_for('new_user') }}">here</a>!
+    {% endif %}
+{% endblock %}

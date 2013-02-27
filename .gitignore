@@ -1,0 +1,14 @@
+# Directories
+venv/
+backup/
+
+# Compiled files
+*.py[cod]
+
+# SWP files
+*.swp
+
+# Database files
+*.db
+*.cfg
+
