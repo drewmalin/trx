@@ -1,5 +1,6 @@
 from flask import Flask
 
+
 app = Flask(__name__)
 app.database = '/tmp/wod.db'
 app.debug = True
@@ -25,3 +26,12 @@ app.add_url_rule('/newexercise',
 app.add_url_rule('/weighin',
 	view_func=WeighInView.as_view('weighin'),
 	methods=['GET','POST'])
+app.add_url_rule('/calendar',
+	view_func=CalendarView.as_view('calendar'),
+	methods=['GET'])
+
+from utilities import db
+
+# Uncomment when db refreshes are needed
+#db.drop_all()
+#db.create_all()
