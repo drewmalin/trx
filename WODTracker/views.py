@@ -18,7 +18,6 @@ def request_workouts():
 	workoutListStr = workoutListStr[:-1]
 	workoutDateStr = workoutDateStr[:-1]
 
-	print '{"name":\"'+exercise.name+'\","units":\"'+exercise.uom+'\","arr":['+workoutListStr+'],"dates":['+workoutDateStr+']}'
 	return '{"name":\"'+exercise.name+'\","units":\"'+exercise.uom+'\","arr":['+workoutListStr+'],"dates":['+workoutDateStr+']}'
 
 #---------------- Views ----------------#
@@ -27,7 +26,7 @@ class Index(flask.views.MethodView):
 		if 'uid' in flask.session and User.query.count() > 0:
 			user = User.query.filter_by(id=flask.session['uid']).first()
 			workouts = user.workouts
-			exercises = Exercise.query.all()
+			exercises = Exercise.query.order_by(Exercise.name).all()
 			return flask.render_template('user.html', workouts=workouts, exercises=exercises)
 		else:
 			flask.session.pop('uid', None)
@@ -95,7 +94,7 @@ class NewUser(flask.views.MethodView):
 
 class WorkoutView(flask.views.MethodView):
 	def get(self):
-		exercises = Exercise.query.all()
+		exercises = Exercise.query.order_by(Exercise.name).all()
 		return flask.render_template('workout.html', exercises=exercises)
 	def post(self):
 		if flask.request.form['exerciseselect'] == "":
