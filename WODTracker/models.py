@@ -20,14 +20,14 @@ class Workout(db.Model):
 	exercise        = db.relationship('Exercise', backref='workouts')
 	units 			= db.Column(db.Integer)
 	extra_credit 	= db.Column(db.String(100))
-	dateStr         = db.Column(db.String(100))
+	date            = db.Column(db.Date)
 
 	def __init__(self, uid, exercise_id, units, ec, date):
 		self.user_id 		= uid
 		self.exercise_id	= exercise_id
 		self.units 			= units
 		self.extra_credit 	= ec
-		self.dateStr		= date
+		self.date		= date
 
 class Exercise(db.Model):
 	__tablename__ = 'Exercise'
