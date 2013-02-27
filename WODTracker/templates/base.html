@@ -5,7 +5,8 @@
 		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
 		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='twitter-bootstrap/docs/assets/css/bootstrap.css') }}">
 		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/jquery-ui.css') }}">
-		
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='fullcalendar/fullcalendar.css') }}">
+
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
 		<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
 		
@@ -13,10 +14,13 @@
 		<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery-ui.js') }}">\x3C/script>')</script>
 
 		<script type=text/javascript src="{{ url_for('static', filename='js/charting.js') }}"></script>
+		<script type=text/javascript src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+
 		<script type=text/javascript src="{{ url_for('static', filename='twitter-bootstrap/js/bootstrap-modal.js') }}"></script>
 		<script type=text/javascript src="{{ url_for('static', filename='twitter-bootstrap/js/bootstrap-dropdown.js') }}"></script>
 		<script type=text/javascript src="{{ url_for('static', filename='highcharts/highcharts.js') }}"></script>
 		<script type=text/javascript src="{{ url_for('static', filename='highcharts/exporting.js') }}"></script>
+		<script type=text/javascript src="{{ url_for('static', filename='fullcalendar/fullcalendar.min.js') }}"></script>
 	</head>
 	<body>
 		<div id="wrap">

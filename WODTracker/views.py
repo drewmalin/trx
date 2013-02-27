@@ -14,12 +14,16 @@ def request_workouts():
 
 	for workout in workouts:
 		workoutListStr += "\"" + str(workout.units) + "\","
-		workoutDateStr += "\"" + workout.date.date.strftime('%m/%d/%Y') + "\","
+		workoutDateStr += "\"" + workout.date.strftime('%m/%d/%Y') + "\","
 
 	workoutListStr = workoutListStr[:-1]
 	workoutDateStr = workoutDateStr[:-1]
 
 	return '{"name":\"'+exercise.name+'\","units":\"'+exercise.uom+'\","arr":['+workoutListStr+'],"dates":['+workoutDateStr+']}'
+
+@app.route('/_request_calendar')
+def request_calendar():
+	return '{"title":"super awesome!","start":"2013-01-01T13:15:30Z"}'
 
 #---------------- Views ----------------#
 class Index(flask.views.MethodView):
@@ -147,3 +151,7 @@ class WeighInView(flask.views.MethodView):
 		return flask.render_template('weighin.html')
 	def post(self):
 		return 'hi'
+
+class CalendarView(flask.views.MethodView):
+	def get(self):
+		return flask.render_template('calendar.html')

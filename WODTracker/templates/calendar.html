@@ -5,15 +5,15 @@
         <li>
             <a href="{{ url_for('index') }}">Workout</a>
         </li>
-    	<li>
-    		<a href="{{ url_for('calendar') }}">Calendar</a>
+    	<li class="active">
+    		<a href="#">Calendar</a>
 		</li>
-        <li class="active">
-            <a href="#">Weigh-in</a>
+        <li>
+            <a href="{{ url_for('weighin') }}">Weigh-in</a>
         </li>
 	</ul>
 	
-	<div id="weighin" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+	<div id='calendar'></div>
 
 	{% endif %}
 {% endblock %}
