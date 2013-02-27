@@ -5,6 +5,7 @@ from WODTracker import app
 from flask.ext.login import *
 from datetime import datetime, date
 
+# All workouts for a user
 @app.route('/_request_workouts')
 def request_workouts():
 	exerciseReq = flask.request.args.get('exercise', '', type=str)
@@ -22,9 +23,31 @@ def request_workouts():
 
 	return '{"name":\"'+exercise.name+'\","units":\"'+exercise.uom+'\","arr":['+workoutListStr+'],"dates":['+workoutDateStr+']}'
 
+# Full calendar for a user
 @app.route('/_request_calendar')
 def request_calendar():
-	return '{"title":"super awesome!","start":"2013-01-01T13:15:30Z"}'
+	workouts = Workout.query.filter_by(user_id=flask.session['uid'])
+	fullStr = "["
+
+	for workout in workouts:
+		fullStr += "{"
+		fullStr += "\"id\":" + str(workout.id) + ","
+		fullStr += "\"title\":" + "\"" + workout.exercise.name + "\","
+		fullStr += "\"start\":" + "\"" + workout.date.strftime('%Y-%m-%d') + "\","
+		fullStr += "\"allDay\":true}"
+		fullStr += ","
+
+	fullStr = fullStr[:-1] + "]"
+
+	return fullStr
+	
+# Single workout for a user
+@app.route('/_request_workout')
+def request_workout():
+	workoutID = flask.request.args.get('workoutID', '', type=int)
+	workout = Workout.query.filter_by(user_id=flask.session['uid'], id=workoutID).first()
+
+	return '{"units":"'+str(workout.units)+'","uom":"'+workout.exercise.uom+'"}'
 
 #---------------- Views ----------------#
 class Index(flask.views.MethodView):
