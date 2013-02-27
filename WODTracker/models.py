@@ -1,5 +1,5 @@
 from flask.ext.login import AnonymousUser
-from utilities import db
+from utilities import db, login_manager
 
 #---------------- Models ----------------#
 class User(db.Model): 
@@ -20,7 +20,7 @@ class User(db.Model):
                 self.active = active
                 self.admin = admin
 
-        def __repr__(self)
+        def __repr__(self):
             return '<User: %r>' % (self.username)
 
         def is_authenticated(self):
@@ -37,6 +37,10 @@ class User(db.Model):
 
         def get_id(self):
             return self.id
+
+@login_manager.user_loader
+def load_user(userid):
+    return User.query.filter_by(id=userid).first()
 
 #Override default login anon user to provide implementation
 #of methods that might be called on an anonymous user

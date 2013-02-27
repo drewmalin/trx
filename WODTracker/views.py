@@ -1,8 +1,8 @@
-from flask.ext.login import *
 from utilities import db
 import flask, flask.views
 from models import *
 from WODTracker import app
+from flask.ext.login import *
 from datetime import datetime, date
 
 @app.route('/_request_workouts')
@@ -29,9 +29,8 @@ def request_calendar():
 #---------------- Views ----------------#
 class Index(flask.views.MethodView):
 	def get(self):
-                user = current_user
-		if not user.is_anonymous() and User.query.count() > 0:
-			user = User.query.filter_by(id=user.id).first()
+		if not current_user.is_anonymous() and User.query.count() > 0:
+			user = User.query.filter_by(id=current_user.id).first()
 			workouts = user.workouts
 			exercises = Exercise.query.order_by(Exercise.name).all()
 			return flask.render_template('user.html', workouts=workouts, exercises=exercises)
