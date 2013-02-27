@@ -2,6 +2,7 @@ from utilities import db
 import flask, flask.views
 from models import *
 from WODTracker import app
+from datetime import datetime, date
 
 @app.route('/_request_workouts')
 def request_workouts():
@@ -13,7 +14,7 @@ def request_workouts():
 
 	for workout in workouts:
 		workoutListStr += "\"" + str(workout.units) + "\","
-		workoutDateStr += "\"" + str(workout.dateStr) + "\","
+		workoutDateStr += "\"" + workout.date.date.strftime('%m/%d/%Y') + "\","
 
 	workoutListStr = workoutListStr[:-1]
 	workoutDateStr = workoutDateStr[:-1]
@@ -110,7 +111,8 @@ class WorkoutView(flask.views.MethodView):
 		exercise = Exercise.query.filter_by(name=flask.request.form['exerciseselect']).first().id
 		results  = flask.request.form['result']
 		ec 		 = flask.request.form['extracredit']
-		date     = flask.request.form['date']
+		datestr     = flask.request.form['date']
+                date        = datetime.strptime(datestr, '%m/%d/%Y').date()
 		workout  = Workout(flask.session['uid'], exercise, results, ec, date)
 
 		db.session.add(workout)
