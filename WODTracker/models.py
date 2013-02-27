@@ -1,4 +1,5 @@
-from utilities import db
+from flask.ext.login import AnonymousUser
+from utilities import db, login_manager
 
 #---------------- Models ----------------#
 class User(db.Model): 
@@ -7,10 +8,45 @@ class User(db.Model):
 	username 	= db.Column(db.String(80))
 	password 	= db.Column(db.String(100))
 	workouts	= db.relationship('Workout', backref='user')
+        authenticated   = db.Column(db.Boolean)
+        active          = db.Column(db.Boolean)
+        admin           = db.Column(db.Boolean)
 
-	def __init__(self, username, password):
+	def __init__(self, username, password, authenticated=False, \
+            active=False, admin=False):
 		self.username = username
 		self.password = password
+                self.authenticated = authenticated
+                self.active = active
+                self.admin = admin
+
+        def __repr__(self):
+            return '<User: %r>' % (self.username)
+
+        def is_authenticated(self):
+            return self.authenticated
+
+        def is_active(self):
+            return self.active
+
+        def is_anonymous(self):
+            return False
+
+        def is_admin(self):
+            return self.admin
+
+        def get_id(self):
+            return self.id
+
+@login_manager.user_loader
+def load_user(userid):
+    return User.query.filter_by(id=userid).first()
+
+#Override default login anon user to provide implementation
+#of methods that might be called on an anonymous user
+class Anonymous(AnonymousUser):
+    def is_admin(self):
+        return False
 
 class Workout(db.Model):
 	__tablename__ = 'Workout'
