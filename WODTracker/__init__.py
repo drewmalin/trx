@@ -5,7 +5,7 @@ app.database = '/tmp/wod.db'
 app.debug = True
 app.secret_key = 'dev'
 # Setup database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///WODTracker.db'
 
 import WODTracker.views
 from views import *
