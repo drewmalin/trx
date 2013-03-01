@@ -32,6 +32,7 @@ app.add_url_rule('/calendar',
 
 from utilities import db
 
+
 # Uncomment when db refreshes are needed
 #db.drop_all()
 #db.create_all()
