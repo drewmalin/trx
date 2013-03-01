@@ -26,7 +26,7 @@ def request_workouts():
 # Full calendar for a user
 @app.route('/_request_calendar')
 def request_calendar():
-	workouts = Workout.query.filter_by(user_id=flask.session['uid'])
+	workouts = Workout.query.filter_by(user_id=current_user.id)
 	fullStr = "["
 
 	for workout in workouts:

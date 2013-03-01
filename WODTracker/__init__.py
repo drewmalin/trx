@@ -2,7 +2,7 @@ from flask import Flask
 
 
 app = Flask(__name__)
-app.database = '/tmp/wod.db'
+app.database = 'WODTracker.db'
 app.debug = True
 app.secret_key = 'dev'
 # Setup database
