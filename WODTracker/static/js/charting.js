@@ -2,8 +2,10 @@ $(function () {
     var chart;
     var workoutList = [];
     var dateList = [];
-
+    var units;
+    var name;
     var str;
+
     $(document).ready(function() {
       
       // Initial chart generation, happens upon page load
@@ -18,21 +20,20 @@ $(function () {
        * Request data from the server
        */
       function requestData() {
-        $.getJSON('http://127.0.0.1:5000/_request_workouts', 
-          {
-            exercise: $("#refresh_list").val()
-          },
+        $.getJSON('/users/'+$("#chart").attr("uid")+'/exercises/'+$("#refresh_list").val()+'/',
           function(data) {
+            if (data == null) return;
             workoutList = [];
             dateList = [];
-
-            for (var i = 0; i < data.arr.length; i++) {
-              workoutList[i] = parseInt(data.arr[i]);
-            }
-            for (var i = 0; i < data.dates.length; i++) {
-              dateList[i] = data.dates[i];
-            }
             
+            units = data[0].uom;
+            name = data[0].exercise_name;
+
+            for (var i = 0; i < data.length; i++) {
+              workoutList[i] = parseInt(data[i].units);
+              dateList[i] = data[i].date;
+            }
+
             generateChart(data);
           }
         );
@@ -50,7 +51,7 @@ $(function () {
               marginBottom: 25
           },
           title: {
-              text: data.name,
+              text: name,
               x: -20 //center
           },
           xAxis: {
@@ -58,7 +59,7 @@ $(function () {
           },
           yAxis: {
               title: {
-                  text: data.units
+                  text: units
               },
               plotLines: [{
                   value: 0,
@@ -68,8 +69,8 @@ $(function () {
           },
           tooltip: {
               formatter: function() {
-                      return '<b>'+ this.series.name +'</b><br/>'+
-                      this.x +': '+ this.y +' '+ data.units;
+                      return '<b>'+ name +'</b><br/>'+
+                      this.x +': '+ this.y +' '+ units;
               }
           },
           legend: {
@@ -81,7 +82,7 @@ $(function () {
               borderWidth: 0
           },
           series: [{
-              name: data.name,
+              name: name,
               data: workoutList
           }]
         });

@@ -27,7 +27,7 @@
         		</select>
         	<dd><button id="refresh_button">Refresh Chart</button>
         </dt>
-        <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+        <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto" uid="{{session['uid']}}"></div>
         <h4><a href="{{url_for('workout')}}">Record Workout</a></h4><br>
     <!-- If no user is selected, allow them to "login" -->
 	{% else %}
