@@ -33,10 +33,10 @@ class Index(flask.views.MethodView):
 
 		username = flask.request.form['username']
 		password = flask.request.form['password']
-		user = User.query.filter_by(username=username, password=password).first()
+		user = User.query.filter_by(username=username).first()
         
 		# Query user table
-		if not user:
+		if not user or not user.check_password(password):
 			flask.flash("Username or password is incorrect!")
 			return flask.redirect(flask.url_for('index'))
 		else:
@@ -139,3 +139,9 @@ class WeighInView(flask.views.MethodView):
 class CalendarView(flask.views.MethodView):
 	def get(self):
 		return flask.render_template('calendar.html')
+
+class UserView(flask.views.MethodView):
+    def get(self):
+        users = User.query.order_by(User.id.asc())
+        return flask.render_template('users.html', users=users)
+

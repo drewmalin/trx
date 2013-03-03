@@ -30,6 +30,9 @@ app.add_url_rule('/weighin',
 app.add_url_rule('/calendar',
 	view_func=CalendarView.as_view('calendar'),
 	methods=['GET'])
+app.add_url_rule('/users',
+        view_func=UserView.as_view('users'),
+        methods=['GET'])
 
 # API rules
 app.add_url_rule('/users/',
