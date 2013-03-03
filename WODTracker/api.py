@@ -131,23 +131,17 @@ class ExerciseAPI(flask.views.MethodView):
 @app.route('/calendar_feed')
 @crossdomain(origin='*')
 def request_calendar():
-	jsonStr = ""
-	workout_id = flask.request.args.get('workout_id', '', type=int)
+	jsonStr = "["
+	workouts = Workout.query.filter_by(user_id=current_user.id)
 
-	if workout_id is '':
-		workouts = Workout.query.filter_by(user_id=current_user.id)
-		jsonStr = "["
+	for workout in workouts:
+		jsonStr += "{"
+		jsonStr += "\"id\":" + str(workout.id) + ","
+		jsonStr += "\"title\":" + "\"" + workout.exercise.name + "\","
+		jsonStr += "\"start\":" + "\"" + workout.date.strftime('%Y-%m-%d') + "\","
+		jsonStr += "\"allDay\":true}"
+		jsonStr += ","
 
-		for workout in workouts:
-			jsonStr += "{"
-			jsonStr += "\"id\":" + str(workout.id) + ","
-			jsonStr += "\"title\":" + "\"" + workout.exercise.name + "\","
-			jsonStr += "\"start\":" + "\"" + workout.date.strftime('%Y-%m-%d') + "\","
-			jsonStr += "\"allDay\":true}"
-			jsonStr += ","
-
-		jsonStr = jsonStr[:-1] + "]"
-	else:
-		workout = Workout.query.filter_by(user_id=current_user.id, id=workout_id).first();
-		jsonStr = "{\"units\":\""+str(workout.units)+"\",\"uom\":\""+workout.exercise.uom+"\"}"
+	jsonStr = jsonStr[:-1] + "]"
+	
 	return jsonStr
