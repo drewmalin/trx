@@ -89,10 +89,3 @@ $(function () {
       }
     });    
 });
-/*
-              <ul class="nav nav-pills">
-                <li class="active">
-                  <a href="{{ url_for('index') }}">Home</a>
-                </li>
-              </ul>
-              */

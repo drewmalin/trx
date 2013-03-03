@@ -43,10 +43,11 @@ class Index(flask.views.MethodView):
 			login_user(user)
 			flask.redirect(flask.url_for('index'))
 			if (login_user(user)):
-				flask.flash("Logged in!")
+				flask.flash("Welcome back!")
 				return flask.redirect(flask.url_for('index'))
 			else:
 				flask.flash("Login failed!")
+				logout_user()
 				return flask.redirect(flask.url_for('index'))
 
 class NewUser(flask.views.MethodView):

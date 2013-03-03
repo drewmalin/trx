@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
-	{% if 'username' in session %}
+	{% if current_user.is_authenticated() %}
 	<ul class="nav nav-tabs">
         <li>
             <a href="{{ url_for('index') }}">Workout</a>

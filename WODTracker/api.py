@@ -22,6 +22,7 @@ from models import *
 from WODTracker import app
 from datetime import datetime, date
 from decorators import *
+from flask.ext.login import *
 
 class UserAPI(flask.views.MethodView):
 	@crossdomain(origin='*')
@@ -147,6 +148,6 @@ def request_calendar():
 
 		jsonStr = jsonStr[:-1] + "]"
 	else:
-		workout = Workout.query.filter_by(user_id=flask.session['uid'], id=workout_id).first();
+		workout = Workout.query.filter_by(user_id=current_user.id, id=workout_id).first();
 		jsonStr = "{\"units\":\""+str(workout.units)+"\",\"uom\":\""+workout.exercise.uom+"\"}"
 	return jsonStr
