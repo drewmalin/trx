@@ -2,26 +2,25 @@ from utilities import db
 import flask, flask.views
 from models import *
 from WODTracker import app
+from flask.ext.login import *
 from datetime import datetime, date
 
 
 #---------------- Views ----------------#
 class Index(flask.views.MethodView):
 	def get(self):
-		if 'uid' in flask.session and User.query.count() > 0:
-			user = User.query.filter_by(id=flask.session['uid']).first()
+		if not current_user.is_anonymous() and User.query.count() > 0:
+			user = User.query.filter_by(id=current_user.id).first()
 			workouts = user.workouts
 			exercises = Exercise.query.order_by(Exercise.name).all()
 			return flask.render_template('user.html', workouts=workouts, exercises=exercises)
 		else:
-			flask.session.pop('uid', None)
-			flask.session.pop('username', None)
+			logout_user()
 			return flask.render_template('user.html')
 	def post(self):
 		# Handle logout request
 		if 'logout' in flask.request.form:
-			flask.session.pop('username', None)
-			flask.session.pop('uid', None)
+			logout_user()
 			return flask.redirect(flask.url_for('index'))
 		
 		# Ensure username and password are provided
@@ -41,9 +40,14 @@ class Index(flask.views.MethodView):
 			flask.flash("Username or password is incorrect!")
 			return flask.redirect(flask.url_for('index'))
 		else:
-			flask.session['username'] = user.username
-			flask.session['uid'] = user.id
-			return flask.redirect(flask.url_for('index'))
+			login_user(user)
+			flask.redirect(flask.url_for('index'))
+			if (login_user(user)):
+				flask.flash("Logged in!")
+				return flask.redirect(flask.url_for('index'))
+			else:
+				flask.flash("Login failed!")
+				return flask.redirect(flask.url_for('index'))
 
 class NewUser(flask.views.MethodView):
 	def get(self):
@@ -73,8 +77,7 @@ class NewUser(flask.views.MethodView):
 		db.session.add(user)
 		db.session.commit()
 
-		flask.session['username'] = username
-		flask.session['uid'] = User.query.filter_by(username=username).first().id
+		login_user(user)
 		return flask.redirect(flask.url_for('index'))
 
 class WorkoutView(flask.views.MethodView):
@@ -96,8 +99,8 @@ class WorkoutView(flask.views.MethodView):
 		results  = flask.request.form['result']
 		ec 		 = flask.request.form['extracredit']
 		datestr     = flask.request.form['date']
-                date        = datetime.strptime(datestr, '%m/%d/%Y').date()
-		workout  = Workout(flask.session['uid'], exercise, results, ec, date)
+		date        = datetime.strptime(datestr, '%m/%d/%Y').date()
+		workout  = Workout(current_user.id, exercise, results, ec, date)
 
 		db.session.add(workout)
 		db.session.commit()

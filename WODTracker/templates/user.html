@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
 	<!-- If the user is selected, allow them to switch users ("logout") -->
-	{% if 'username' in session %}
+	{% if current_user.is_authenticated() %}
 		<ul class="nav nav-tabs">
 	        <li class="active">
 	            <a href="#">Workout</a>
@@ -27,7 +27,7 @@
         		</select>
         	<dd><button id="refresh_button">Refresh Chart</button>
         </dt>
-        <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto" uid="{{session['uid']}}"></div>
+        <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto" uid="{{current_user.id}}"></div>
         <h4><a href="{{url_for('workout')}}">Record Workout</a></h4><br>
     <!-- If no user is selected, allow them to "login" -->
 	{% else %}

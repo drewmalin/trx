@@ -5,7 +5,7 @@
             $( "#datepicker" ).datepicker();
         });
     </script>
-    <h4>New workout for {{session['username']}}</h4>
+    <h4>New workout for {{current_user.username}}</h4>
     <form action="{{ url_for('workout') }}" method=post>
             <dl>
                 <dt>Exercise *: 

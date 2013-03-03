@@ -30,7 +30,7 @@ class UserAPI(flask.views.MethodView):
 		users = None
 		if user_id is None:
 			# Retrieve all users
-			users = User.query.all()
+			users = User.query.order_by(User.username.asc())
 			if users is None:
 				jsonStr = ""
 			else:
@@ -61,7 +61,7 @@ class WorkoutAPI(flask.views.MethodView):
 		else:
 			if workout_id is None:
 				# Retrieve all workouts for user
-				workouts = Workout.query.filter_by(user_id=user_id)
+				workouts = Workout.query.filter_by(user_id=user_id).order_by(Workout.date.asc())
 				if workouts is None:
 					jsonStr = ""
 				else:
@@ -100,14 +100,14 @@ class ExerciseAPI(flask.views.MethodView):
 		else:
 			# Retrieve all workouts for all exercises
 			if exercise_name is None:
-				workouts = Workout.query.filter_by(user_id=user_id)
+				workouts = Workout.query.filter_by(user_id=user_id).order_by(Workout.date.asc())
 			# Retrieve all workouts for specific exercise
 			else:
 				exercise = Exercise.query.filter_by(name=exercise_name).first()
 				if exercise is None:
 					jsonStr = ""
 				else:
-					workouts = Workout.query.filter_by(user_id=user_id, exercise_id=int(exercise.id))
+					workouts = Workout.query.filter_by(user_id=user_id, exercise_id=int(exercise.id)).order_by(Workout.date.asc())
 			if workouts is None:
 				jsonStr = ""
 			else:
@@ -134,7 +134,7 @@ def request_calendar():
 	workout_id = flask.request.args.get('workout_id', '', type=int)
 
 	if workout_id is '':
-		workouts = Workout.query.filter_by(user_id=flask.session['uid'])
+		workouts = Workout.query.filter_by(user_id=current_user.id)
 		jsonStr = "["
 
 		for workout in workouts:

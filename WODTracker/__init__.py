@@ -1,8 +1,7 @@
 from flask import Flask
 
-
 app = Flask(__name__)
-app.database = '/tmp/wod.db'
+app.database = 'WODTracker.db'
 app.debug = True
 app.secret_key = 'dev'
 # Setup database
@@ -59,5 +58,5 @@ from utilities import db
 
 
 # Uncomment when db refreshes are needed
-#db.drop_all()
-#db.create_all()
+# db.drop_all()
+# db.create_all()

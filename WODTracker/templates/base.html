@@ -28,9 +28,9 @@
 				<div class="container header">
 					<h1>WODTracker</h1>
 					<div class="row-fluid">
-						{% if 'username' in session %}
+						{% if current_user.is_authenticated() %}
 						<div class="span11">
-							<h4>Current user: {{session['username']}}</h4>
+							<h4>Current user: {{current_user.username}}</h4>
 						</div>
 						<div class="span1">
 							<h4>
