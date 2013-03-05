@@ -2,6 +2,7 @@ $(function () {
     var chart;
     var workoutList = [];
     var dateList = [];
+    var series = [];
     var units;
     var name;
     var str;
@@ -11,33 +12,45 @@ $(function () {
       // Initial chart generation, happens upon page load
       requestData();
 
-      // Re-generate chart when a new exercise is selected
-      $("#refresh_button").click(function() {
-        requestData();
-      });   
-
       /*
        * Request data from the server
        */
       function requestData() {
+        // Re-generate chart when a new exercise is selected
+        $("#refresh_button").click(function() {
+          //requestData();
+          $.getJSON('/workouts/' + '?exercises=' + $("#exerciseDropdown").val() + '&users=' + $("#userDropdown").val(),
+              function(data) {
+                if (data != null) {
+                  dateList = data.dates;
+                  units = data.units;
+                  name = data.exercise;
+                  series = data.data;
+                }
+                generateChart(data);
+              }
+            );
+        })}
+        /* OLD CODE BELOW! 
         $.getJSON('/users/'+$("#chart").attr("uid")+'/exercises/'+$("#refresh_list").val()+'/',
           function(data) {
-            if (data == null) return;
-            workoutList = [];
-            dateList = [];
-            
-            units = data[0].uom;
-            name = data[0].exercise_name;
+            if (data != null) {
+              workoutList = [];
+              dateList = [];
+              
+              units = data[0].uom;
+              name = data[0].exercise_name;
 
-            for (var i = 0; i < data.length; i++) {
-              workoutList[i] = parseInt(data[i].units);
-              dateList[i] = data[i].date;
+              for (var i = 0; i < data.length; i++) {
+                workoutList[i] = parseInt(data[i].units);
+                dateList[i] = data[i].date;
+              }
             }
-
             generateChart(data);
           }
         );
       }
+      */
 
       /*
        * Generate chart using Highchart
@@ -81,10 +94,7 @@ $(function () {
               y: 100,
               borderWidth: 0
           },
-          series: [{
-              name: name,
-              data: workoutList
-          }]
+          series: series
         });
       }
     });    

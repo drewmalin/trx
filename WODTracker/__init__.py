@@ -57,9 +57,6 @@ app.add_url_rule('/users/<int:user_id>/exercises/<string:exercise_name>/',
 	view_func=ExerciseAPI.as_view('exercise_api'),
 	methods=['GET'])
 
-from utilities import db
+from seedDB import seed
+seed(False)
 
-
-# Uncomment when db refreshes are needed
-# db.drop_all()
-# db.create_all()

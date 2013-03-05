@@ -23,6 +23,7 @@ from WODTracker import app
 from datetime import datetime, date
 from decorators import *
 from flask.ext.login import *
+from sqlalchemy import Date, cast
 
 class UserAPI(flask.views.MethodView):
 	@crossdomain(origin='*')
@@ -145,3 +146,132 @@ def request_calendar():
 	jsonStr = jsonStr[:-1] + "]"
 	
 	return jsonStr
+
+@app.route('/exercisedropdown/')
+@crossdomain(origin='*')
+def request_all_exercises():
+	exerciseFilter = request.args.get("term")
+	filterList = exerciseFilter.split(", ")
+
+	jsonStr = "["
+	exercises = Exercise.query.order_by(Exercise.name.asc())
+
+	for exercise in exercises:
+		if any(exercise.name in s for s in filterList):
+			continue
+		else:
+			jsonStr += "\"" + exercise.name + "\","
+	jsonStr = jsonStr[:-1] + "]"
+
+	return jsonStr
+
+@app.route('/userdropdown/')
+@crossdomain(origin='*')
+def request_all_users():
+	userFilter = request.args.get("term")
+	filterList = userFilter.split(", ")
+
+	jsonStr = "["
+	users = User.query.order_by(User.username.asc())
+
+	for user in users:
+		if any(user.username in s for s in filterList):
+			continue
+		elif user.id == current_user.id:
+			continue
+		else:
+			jsonStr += "\"" + user.username + "\","
+	jsonStr = jsonStr[:-1] + "]"
+
+	return jsonStr
+
+@app.route('/workouts/')
+@crossdomain(origin='*')
+def request_all_workouts():
+
+	# Get Exercise using exercise name from query
+	exercise = Exercise.query.filter_by(name=request.args.get("exercises")).first()
+	# Get ID Numbers of all requested users (plus current)
+	userIDList = compileUserIDList(request.args.get("users"))
+	# Get unique list of dates for all shared workouts for exercise
+	uniqueDateList = compileUniqueDates(userIDList, exercise)
+	# Get results for each user in the id list for each workout corresponding to each unique date for exercise
+	workoutDataList = compileWorkoutData(userIDList, exercise, uniqueDateList)
+
+	return flask.jsonify(exercise=exercise.name,units=exercise.uom,dates=dateListAsStrings(uniqueDateList),data=workoutDataList)
+
+
+#### Here be utility functions ####
+
+
+# Parm: strList -- list of comma+space-separated usernames.
+# Function splits each name into a list, then retrieves each user id from the database, returning an
+# array of ids
+def compileUserIDList(strList):
+	idList = []
+	userList = ""
+	if strList is None:
+		pass
+	else:
+		userList = strList.split(",")
+		for user in userList:
+			if user == "":
+				continue
+			else:
+				idList.append(User.query.filter_by(username=user).first().id)
+	idList.append(current_user.id)
+	return idList
+
+# Parm: idList -- array of ids
+# Parm: exercise -- Exercise database object
+# Function gets list of date objects from database. For all workouts in the database that were
+# completed by users with id numbers in idList, and for exercises equal to exercise, all date objects
+# for each workout are retrieved in chronological order and returned as an array
+def compileUniqueDates(idList, exercise):
+	dateList = []
+	allSharedWorkouts = Workout.query.filter(Workout.user_id.in_(idList)).order_by(Workout.date.asc())
+
+	for workout in allSharedWorkouts:
+		if workout.date in dateList or workout.exercise_id != exercise.id:
+			continue
+		else:
+			dateList.append(workout.date)
+	return dateList
+
+# Parm: dateList -- array of date objects
+# Function returns date objects as formatted strings
+def dateListAsStrings(dateList):
+	dateStrList = []
+	for date in dateList:
+		dateStrList.append(date.strftime('%m/%d/%Y'))
+	return dateStrList
+
+# Parm: idList -- array of ids
+# Parm: exercise -- Exercise database object
+# Parm: dateList -- array of date objects
+# Function constructs data on each workout for each user in the idList. For each date in the date list,
+# grab the workout for each user (id) and the exercise, record the results in an array [index, result],
+# then return as a larger array: [name, [index, result], [index, result]]
+def compileWorkoutData(idList, exercise, dateList):
+	workoutSuperList = []
+
+	for userId in idList:
+		i = 0
+		userDict = {}
+		dataList = []
+		for date in dateList:
+			data = []
+			contextWorkout = Workout.query.filter_by(user_id=int(userId), exercise_id=exercise.id, date=date).first()
+			if not contextWorkout:
+				pass
+			else:
+				data.append(i)
+				data.append(contextWorkout.units)
+				dataList.append(data)
+			i=i+1
+		userDict["name"] = User.query.filter_by(id=userId).first().username
+		userDict["data"] = dataList
+
+		workoutSuperList.append(userDict)
+
+	return workoutSuperList

@@ -2,6 +2,55 @@
 {% block body %}
 	<!-- If the user is selected, allow them to switch users ("logout") -->
 	{% if current_user.is_authenticated() %}
+
+     <script>
+    $(function() {
+        function split( val ) {
+            return val.split( /,\s*/ );
+        }
+        $( "#exerciseDropdown" )
+            // don't navigate away from the field on tab when selecting an item
+            .bind( "keydown", function( event ) {
+            if ( event.keyCode === $.ui.keyCode.TAB &&
+                $( this ).data( "ui-autocomplete" ).menu.active ) {
+                event.preventDefault();
+            }
+        })
+        .autocomplete({
+            minLength: 0,
+            source: '/exercisedropdown/',
+            focus: function() {
+                return false;
+            }
+        });
+        $( "#userDropdown" )
+            // don't navigate away from the field on tab when selecting an item
+            .bind( "keydown", function( event ) {
+            if ( event.keyCode === $.ui.keyCode.TAB &&
+                $( this ).data( "ui-autocomplete" ).menu.active ) {
+                event.preventDefault();
+            }
+        })
+        .autocomplete({
+            minLength: 0,
+            source: '/userdropdown/',
+            focus: function() {
+                return false;
+            },
+            select: function( event, ui ) {
+                var terms = split( this.value );
+                // remove the current input
+                terms.pop();
+                // add the selected item
+                terms.push( ui.item.value );
+                // add placeholder to get the comma-and-space at the end
+                terms.push( "" );
+                this.value = terms.join( ", " );
+                return false;
+            }
+        });
+    });
+    </script>
 		<ul class="nav nav-tabs">
 	        <li class="active">
 	            <a href="#">Workout</a>
@@ -18,14 +67,22 @@
             <p>No workouts yet!
         {% endfor %}
         <dt>
-        	View workout history
-        	<dd><br>
-        	<dd><select id="refresh_list">
-        		{% for exercise in exercises %}
-        			<option>{{exercise.name}}</option>
-        		{% endfor %}
-        		</select>
-        	<dd><button id="refresh_button">Refresh Chart</button>
+        	<h4>View workout history</h4>
+        	
+            <dd><br>
+            <dt>Select a workout below:
+            <dd><div class="ui-widget">
+                <input id="exerciseDropdown" size="50" />
+            </div>
+            <dt>Compare your results with other users:
+            <dd><div class="ui-widget">
+                <input id="userDropdown" size="50"/>
+            </div>
+            
+            <dd><br>
+
+            <dd><button id="refresh_button">Refresh Chart</button>
+
         </dt>
         <div id="chart" style="min-width: 400px; height: 400px; margin: 0 auto" uid="{{current_user.id}}"></div>
         <h4><a href="{{url_for('workout')}}">Record Workout</a></h4><br>
