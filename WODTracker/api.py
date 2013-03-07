@@ -180,7 +180,8 @@ def request_all_users():
 		elif user.id == current_user.id:
 			continue
 		else:
-			jsonStr += "\"" + user.username + "\","
+			jsonStr += "{\"value\":\"" + str(user.id) + "\","
+			jsonStr += "\"label\":\"" + user.username + "\"},"
 	jsonStr = jsonStr[:-1] + "]"
 
 	return jsonStr
@@ -214,11 +215,11 @@ def compileUserIDList(strList):
 		pass
 	else:
 		userList = strList.split(",")
-		for user in userList:
-			if user == "":
+		for userID in userList:
+			if userID == "":
 				continue
 			else:
-				idList.append(User.query.filter_by(username=user).first().id)
+				idList.append(User.query.filter_by(id=userID).first().id)
 	idList.append(current_user.id)
 	return idList
 

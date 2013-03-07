@@ -38,14 +38,24 @@
                 return false;
             },
             select: function( event, ui ) {
+
+                // Save text values for prompt
+                var result = "";
                 var terms = split( this.value );
-                // remove the current input
-                terms.pop();
-                // add the selected item
-                terms.push( ui.item.value );
-                // add placeholder to get the comma-and-space at the end
-                terms.push( "" );
-                this.value = terms.join( ", " );
+                if (terms[0] == "") {
+                    terms.splice(0, 1);
+                }
+                terms.push( ui.item.label );
+                result = terms.join(", ");
+                $("#userDropdown").val(result);
+
+                // Save ids for server request
+                var ids = split($("#hiddenUserIDs").val())
+                if (ids[0] == "") {
+                    ids.splice(0, 1);
+                }
+                ids.push(ui.item.value);
+                $("#hiddenUserIDs").val(ids);
                 return false;
             }
         });
@@ -78,7 +88,7 @@
             <dd><div class="ui-widget">
                 <input id="userDropdown" size="50"/>
             </div>
-            
+            <input type="hidden" id="hiddenUserIDs"/>
             <dd><br>
 
             <dd><button id="refresh_button">Refresh Chart</button>

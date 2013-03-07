@@ -19,7 +19,7 @@ $(function () {
         // Re-generate chart when a new exercise is selected
         $("#refresh_button").click(function() {
           //requestData();
-          $.getJSON('/workouts/' + '?exercises=' + $("#exerciseDropdown").val() + '&users=' + $("#userDropdown").val(),
+          $.getJSON('/workouts/' + '?exercises=' + $("#exerciseDropdown").val() + '&users=' + $("#hiddenUserIDs").val(),
               function(data) {
                 if (data != null) {
                   dateList = data.dates;
@@ -31,26 +31,6 @@ $(function () {
               }
             );
         })}
-        /* OLD CODE BELOW! 
-        $.getJSON('/users/'+$("#chart").attr("uid")+'/exercises/'+$("#refresh_list").val()+'/',
-          function(data) {
-            if (data != null) {
-              workoutList = [];
-              dateList = [];
-              
-              units = data[0].uom;
-              name = data[0].exercise_name;
-
-              for (var i = 0; i < data.length; i++) {
-                workoutList[i] = parseInt(data[i].units);
-                dateList[i] = data[i].date;
-              }
-            }
-            generateChart(data);
-          }
-        );
-      }
-      */
 
       /*
        * Generate chart using Highchart
