@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Trainnosaurus-RX</title>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='twitter-bootstrap/docs/assets/css/bootstrap.css') }}">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/jquery-ui.css') }}">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='fullcalendar/fullcalendar.css') }}">
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
+		<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+		
+		<script src="//code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+		<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery-ui.js') }}">\x3C/script>')</script>
+
+		<script type=text/javascript src="{{ url_for('static', filename='twitter-bootstrap/js/bootstrap-modal.js') }}"></script>
+		<script type=text/javascript src="{{ url_for('static', filename='twitter-bootstrap/js/bootstrap-dropdown.js') }}"></script>
+		<script type=text/javascript src="{{ url_for('static', filename='highcharts/highcharts.js') }}"></script>
+		<script type=text/javascript src="{{ url_for('static', filename='highcharts/exporting.js') }}"></script>
+		<script type=text/javascript src="{{ url_for('static', filename='fullcalendar/fullcalendar.min.js') }}"></script>
+		<script type=text/javascript src="{{ url_for('static', filename='extjs/ext.js') }}"></script>
+
+		<script type=text/javascript src="{{ url_for('static', filename='js/charting.js') }}"></script>
+		<script type=text/javascript src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<div class="container-fluid">
+				<div class="container header">
+					<h1>Trainnosaurus-Rx</h1>
+					<div class="row-fluid">
+						{% if current_user.is_authenticated() %}
+						<div class="span11">
+							<h4>Current user: {{current_user.username}}</h4>
+						</div>
+						<div class="span1">
+							<h4>
+							<form name=logout action="{{url_for('index')}}" method="post">
+	            				<input type="hidden" value="logout" name="logout" />
+	            				<a href="javascript:document.logout.submit()">Logout</a>
+	       					</form>
+	       				</h4>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+				<div class="container editor">
+					<div class="row-fluid">
+						<div class="span 12">
+							<div class="alert alert-info" id="infoBar">
+								<!-- Display flashed messages -->
+								{% for message in get_flashed_messages() %}
+				        			<div class=flash>{{ message }}</div>
+				    			{% endfor %}
+							</div>
+							<!-- Spot for rendering primary block -->
+							{% block body %}{% endblock %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

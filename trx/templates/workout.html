@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block body %}
+    <script>
+        $(function() {
+            $( "#datepicker" ).datepicker();
+        });
+    </script>
+    <h4>New workout for {{current_user.username}}</h4>
+    <form action="{{ url_for('workout') }}" method=post>
+            <dl>
+                <dt>Exercise *: 
+                <dd><select name=exerciseselect id="refresh">
+                    {% for exercise in exercises %}
+                        <option>{{exercise.name}}</option>
+                    {% endfor %}
+                </select>
+                <p>Don't see the exercise you're looking for? <a href="{{ url_for('new_exercise') }}">Add a new one</a>!
+                <dt>Date *:
+                <dd><input type=text name=date id="datepicker" />
+                <dt>Result *: 
+                <dd><input type=text name=result /><br>
+                <dt>Extra Credit: 
+                <dd><input type=text name=extracredit /><br>
+                <dd><input type=submit value=Submit />
+            </dl>
+    </form>
+{% endblock %}
