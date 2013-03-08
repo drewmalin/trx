@@ -1,2 +1,2 @@
-WODTracker
+trx
 ==========
