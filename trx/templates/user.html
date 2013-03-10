@@ -62,16 +62,23 @@
     });
     </script>
 		<ul class="nav nav-tabs">
-	        <li class="active">
-	            <a href="#">Workout</a>
-	        </li>
+            <li class="dropdown active">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Home<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('calendar') }}">Calendar</a></li>
+                    <li><a href="{{ url_for('index') }}">Chart</a></li>
+                    <li><a href="{{ url_for('weighin') }}">Weigh-in</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Settings</a></li>
+                </ul>
+            </li>
             <li>
-                <a href="{{ url_for('calendar') }}">Calendar</a>
+                <a href="#">Gym</a>
             </li>
 	        <li>
-	            <a href="{{ url_for('weighin') }}">Weigh-in</a>
+	            <a href="#">User Search</a>
 	        </li>
-    	</ul>
+        </ul>
         {% for workout in workouts %}
         {% else %}
             <p>No workouts yet!

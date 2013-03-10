@@ -2,14 +2,21 @@
 {% block body %}
 	{% if current_user.is_authenticated() %}
 	<ul class="nav nav-tabs">
-        <li>
-            <a href="{{ url_for('index') }}">Workout</a>
+        <li class="dropdown active">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Home<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ url_for('calendar') }}">Calendar</a></li>
+                <li><a href="{{ url_for('index') }}">Workout</a></li>
+                <li><a href="{{ url_for('weighin') }}">Weigh-in</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Settings</a></li>
+            </ul>
         </li>
-    	<li class="active">
-    		<a href="#">Calendar</a>
+        <li> 
+    		<a href="#">Gym</a>
 		</li>
         <li>
-            <a href="{{ url_for('weighin') }}">Weigh-in</a>
+            <a href="#">User Search</a>
         </li>
 	</ul>
 	
