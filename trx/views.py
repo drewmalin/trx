@@ -103,6 +103,9 @@ class WorkoutView(flask.views.MethodView):
         date        = datetime.strptime(datestr, '%m/%d/%Y').date()
         workout  = Workout(current_user.id, exercise, results, ec, date)
 
+        if workout.is_pr:
+            flask.flash('Congratulations! That was a new PR!')
+
         db.session.add(workout)
         db.session.commit()
 
