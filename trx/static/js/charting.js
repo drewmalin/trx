@@ -9,6 +9,73 @@ $(function () {
 
     $(document).ready(function() {
       
+        $("#select-workout").select2({
+            placeholder: "Select a workout",
+            ajax: {
+                url: "/exercisedropdown/",
+                dataType: "json",
+                data: function(term, page) {
+                    return { q: term, page: page, per: 10 };
+                },
+                results: function(data, page) {
+                    return { results: data.results };
+                }
+            }
+        });
+
+        $("#select-user").select2({
+            placeholder: "Select users",
+            multiple: "true",
+            ajax: {
+                url: "/userdropdown/",
+                dataType: "json",
+                data: function(term, page) {
+                    return { q: term, page: page, per: 10 };
+                },
+                results: function(data, page) {
+                    return { results: data.results };
+                }
+            }
+        });
+
+        var now = new Date();
+        now.setHours(0);
+        now.setMinutes(0);
+        now.setSeconds(0);
+
+        var datefrom = $("#date-from")
+            .datepicker()
+            .on('show', function(ev) {
+                if (ev.date.valueOf() < now.valueOf()) {
+                    return 'disabled';
+                }
+                else {
+                    return '';
+                }
+            })
+            .on('changeDate', function(ev) {
+                if (ev.date.valueOf() > dateto.date.valueOf()) {
+                    var newDate = new Date(ev.date);
+                    newDate.setDate(newDate.getDate() + 1);
+                    dateto.setValue(newDate);
+                }
+                datefrom.hide();
+            })
+            .data('datepicker');
+
+        var dateto = $("#date-to").datepicker({
+            onRender: function(date) {
+                if (date.valueOf() > now.valueOf() ||
+                    date.valueOf() <= datefrom.date.valueOf()) {
+                    return 'disabled';
+                }
+                else {
+                    return '';
+                }
+            }
+        }).on('changeDate', function(chEvent) {
+            dateto.hide();
+        }).data('datepicker');
       // Initial chart generation, happens upon page load
       requestData();
 
@@ -19,7 +86,7 @@ $(function () {
         // Re-generate chart when a new exercise is selected
         $("#refresh_button").click(function() {
           //requestData();
-          $.getJSON('/workouts/' + '?exercises=' + $("#exerciseDropdown").val() + '&users=' + $("#hiddenUserIDs").val(),
+          $.getJSON('/workouts/' + '?exercises=' + $("#select-workout").val() + '&users=' + $("#select-user").val(),
               function(data) {
                 if (data != null) {
                   dateList = data.dates;

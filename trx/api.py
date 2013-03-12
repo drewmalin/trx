@@ -150,48 +150,50 @@ def request_calendar():
 @app.route('/exercisedropdown/')
 @crossdomain(origin='*')
 def request_all_exercises():
-	exerciseFilter = request.args.get("term")
-	filterList = exerciseFilter.split(", ")
+    exerciseFilter = request.args.get("q")
+    exerciseList = []
+    
+    if not exerciseFilter:
+        exercises = Exercise.query.order_by(Exercise.name.asc())
+    else:
+        exercises = Exercise.query.filter(Exercise.name.contains(exerciseFilter)).order_by(Exercise.name.asc())
 
-	jsonStr = "["
-	exercises = Exercise.query.order_by(Exercise.name.asc())
-
-	for exercise in exercises:
-		if any(exercise.name in s for s in filterList):
-			continue
-		else:
-			jsonStr += "\"" + exercise.name + "\","
-	jsonStr = jsonStr[:-1] + "]"
-
-	return jsonStr
+    for exercise in exercises:
+        exerciseDict = {}
+        exerciseDict["id"] = str(exercise.id)
+        exerciseDict["text"] = exercise.name
+        exerciseList.append(exerciseDict)
+    
+    return flask.jsonify(results=exerciseList)
 
 @app.route('/userdropdown/')
 @crossdomain(origin='*')
 def request_all_users():
-	userFilter = request.args.get("term")
-	filterList = userFilter.split(", ")
+    userFilter = request.args.get("q")
+    userList = []
 
-	jsonStr = "["
-	users = User.query.order_by(User.username.asc())
+    if not userFilter:
+        users = User.query.order_by(User.username.asc())
+    else:
+        users = User.query.filter(User.username.contains(userFilter)).order_by(User.username.asc())
 
-	for user in users:
-		if any(user.username in s for s in filterList):
-			continue
-		elif user.id == current_user.id:
-			continue
-		else:
-			jsonStr += "{\"value\":\"" + str(user.id) + "\","
-			jsonStr += "\"label\":\"" + user.username + "\"},"
-	jsonStr = jsonStr[:-1] + "]"
+    for user in users:
+        if user.id == current_user.id:
+            continue
+        else:
+            userDict = {}
+            userDict["id"] = str(user.id)
+            userDict["text"] = user.username
+            userList.append(userDict)
 
-	return jsonStr
-
+    return flask.jsonify(results=userList)
+    
 @app.route('/workouts/')
 @crossdomain(origin='*')
 def request_all_workouts():
 
 	# Get Exercise using exercise name from query
-	exercise = Exercise.query.filter_by(name=request.args.get("exercises")).first()
+	exercise = Exercise.query.filter_by(id=request.args.get("exercises")).first()
 	# Get ID Numbers of all requested users (plus current)
 	userIDList = compileUserIDList(request.args.get("users"))
 	# Get unique list of dates for all shared workouts for exercise
