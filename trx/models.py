@@ -75,10 +75,10 @@ class Workout(db.Model):
 
     def is_new_pr(self, units):
         curr_pr = get_current_pr(self.user_id, self.exercise_id)
-        if curr_pr == None:
-            return True
-        else:
+        if curr_pr != None:
             return units > curr_pr.units
+        else:
+            return True
 
 ####GLOBAL METHODS RETURNING WORKOUTS#### 
 def get_current_pr(uid, eid):
