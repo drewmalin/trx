@@ -71,12 +71,17 @@ class Workout(db.Model):
         self.units          = units
         self.extra_credit   = ec
         self.date           = date
-        self.is_pr             = units > Workout.get_current_pr(uid, eid).units
+        self.is_pr          = self.is_new_pr(units)
 
-    #Static method that returns the instance of Workout that is the current PR for
-    # the user and exercise provided
-    @staticmethod
-    def get_current_pr(uid, eid):
+    def is_new_pr(self, units):
+        curr_pr = get_current_pr(self.user_id, self.exercise_id)
+        if curr_pr == None:
+            return True
+        else:
+            return units > curr_pr.units
+
+####GLOBAL METHODS RETURNING WORKOUTS#### 
+def get_current_pr(uid, eid):
         curr_pr = Workout.query.filter_by(user_id=uid, exercise_id=eid).\
             order_by(Workout.units.desc()).first()
         return curr_pr
@@ -93,6 +98,5 @@ class Exercise(db.Model):
         self.uom            = uom
         self.description     = description
 
-    def __repr__(self):
-        return "<Exercise: %r, %r>" % (self.id, self.name)
+    def __repr__(self): return "<Exercise: %r, %r>" % (self.id, self.name)
 
