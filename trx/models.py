@@ -5,13 +5,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #---------------- Models ----------------#
 class User(db.Model): 
     __tablename__ = 'User'
-    id                 = db.Column(db.Integer, primary_key=True)
-    username         = db.Column(db.String(80))
-    password         = db.Column(db.String(100))
+    id              = db.Column(db.Integer, primary_key=True)
+    username        = db.Column(db.String(80))
+    password        = db.Column(db.String(100))
     workouts        = db.relationship('Workout', backref='user')
-    authenticated    = db.Column(db.Boolean)
-    active            = db.Column(db.Boolean)
-    admin            = db.Column(db.Boolean)
+    authenticated   = db.Column(db.Boolean)
+    active          = db.Column(db.Boolean)
+    admin           = db.Column(db.Boolean)
 
     def __init__(self, username, password, authenticated=True, active=True, admin=False):
         self.username = username
@@ -88,15 +88,34 @@ def get_current_pr(uid, eid):
 
 class Exercise(db.Model):
     __tablename__ = 'Exercise'
-    id               = db.Column(db.Integer, primary_key=True)
-    name           = db.Column(db.String(100))
-    uom              = db.Column(db.String(100))
+    id            = db.Column(db.Integer, primary_key=True)
+    name          = db.Column(db.String(100))
+    uom           = db.Column(db.String(100))
     description   = db.Column(db.String(100))
 
     def __init__(self, name, uom, description):
-        self.name             = name
-        self.uom            = uom
-        self.description     = description
+        self.name          = name
+        self.uom           = uom
+        self.description   = description
 
-    def __repr__(self): return "<Exercise: %r, %r>" % (self.id, self.name)
+    def __repr__(self):
+        return "<Exercise: %r, %r>" % (self.id, self.name)
+
+
+class LiftExercise(Exercise):
+    reps        = db.Column(db.Integer)
+    weight      = db.Column(db.Integer)
+
+    def __init__(self, reps, weight):
+        self.reps = reps
+        self.weight = weight
+
+class DistExercise(Exercise):
+    dist        = db.Column(db.Double)
+    time        = db.Column(db.Datetime)
+
+    def __init__(self, dist, time):
+        self.dist = dist
+        self.time = time
+
 
