@@ -60,20 +60,32 @@ class NewUser(flask.views.MethodView):
         if flask.request.form['username'] == "":
             flask.flash("Username is required!")
             return flask.redirect(flask.url_for('new_user'))
+        elif flask.request.form['email'] == "":
+            flask.flash("Email is required!")
+            return flask.redirect(flask.url_for('new_user'))
         elif flask.request.form['password1'] == "" or flask.request.form['password2'] == "":
             flask.flash("Both password fields are required!")
             return flask.redirect(flask.url_for('new_user'))
         elif flask.request.form['password1'] != flask.request.form['password2']:
             flask.flash("Passwords must match!")
             return flask.redirect(flask.url_for('new_user'))
+        elif flask.request.form['fname'] == "":
+            flask.flash("First Name is required!")
+            return flask.redirect(flask.url_for('new_user'))
         elif User.query.filter_by(username=flask.request.form['username']).first() != None:
             flask.flash("Username already in use!")
+            return flask.redirect(flask.url_for('new_user'))
+        elif User.query.filter_by(email=flask.request.form['email']).first() != None:
+            flask.flash("There is already an account for that email!")
             return flask.redirect(flask.url_for('new_user'))
 
         # Username/password is valid, persist new user
         username = flask.request.form['username']
+        email = flask.request.form['email']
         password = flask.request.form['password1']
-        user = User(username, password)
+        fname = flask.request.form['fname']
+        lname = flask.request.form['lname']
+        user = User(username, email, password, fname, lname)
 
         db.session.add(user)
         db.session.commit()

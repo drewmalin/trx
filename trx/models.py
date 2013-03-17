@@ -6,16 +6,32 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class User(db.Model): 
     __tablename__ = 'User'
     id              = db.Column(db.Integer, primary_key=True)
+    #Login Information
     username        = db.Column(db.String(80))
-    password        = db.Column(db.String(100))
+    email           = db.Column(db.String(50), nullable=False)
+    password        = db.Column(db.String(20), nullable=False)
+
+    #Personal Information
+    fname           = db.Column(db.String(20), nullable=False)
+    lname           = db.Column(db.String(20))
+
+    #Trx information!
     workouts        = db.relationship('Workout', backref='user')
+    #gym = db.relationship('Gym', backref='user')
+
+    #Account Information
     authenticated   = db.Column(db.Boolean)
     active          = db.Column(db.Boolean)
     admin           = db.Column(db.Boolean)
 
-    def __init__(self, username, password, authenticated=True, active=True, admin=False):
+    def __init__(self, username, email, password, \
+                fname, lname, \
+                authenticated=True, active=True, admin=False):
         self.username = username
+        self.email = email
         self.set_password(password)
+        self.fname = fname
+        self.lname = lname
         self.authenticated = authenticated
         self.active = active
         self.admin = admin
@@ -111,8 +127,8 @@ class LiftExercise(Exercise):
         self.weight = weight
 
 class DistExercise(Exercise):
-    dist        = db.Column(db.Double)
-    time        = db.Column(db.Datetime)
+    dist        = db.Column(db.Float)
+    time        = db.Column(db.Time)
 
     def __init__(self, dist, time):
         self.dist = dist
