@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 from trx.utilities import db
-from trx.seedDB import seed, seedUsers
+from trx.seedDB import seed
 
 parser = argparse.ArgumentParser(description='T-Rx database utility tool')
 #Reset
@@ -11,7 +11,7 @@ parser.add_argument('-r', '--reset', action='store_true', default=False, \
 parser.add_argument('-v', '--verbose', action='store_true', default=False, \
                     help="Verbose mode")
 #Input File
-parser.add_argument('i', '--input', action='store_const')
+#parser.add_argument('-i', '--input', action='store_const')
 
 args = parser.parse_args()
 verbose = args.verbose
