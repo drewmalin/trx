@@ -1,0 +1,137 @@
+from flask.ext.login import AnonymousUser
+from utilities import db, login_manager
+from werkzeug.security import generate_password_hash, check_password_hash
+
+#---------------- Models ----------------#
+class User(db.Model): 
+    __tablename__ = 'User'
+    id              = db.Column(db.Integer, primary_key=True)
+    #Login Information
+    username        = db.Column(db.String(80))
+    email           = db.Column(db.String(50), nullable=False)
+    password        = db.Column(db.String(20), nullable=False)
+
+    #Personal Information
+    fname           = db.Column(db.String(20), nullable=False)
+    lname           = db.Column(db.String(20))
+
+    #Trx information!
+    workouts        = db.relationship('Workout', backref='user')
+    #gym = db.relationship('Gym', backref='user')
+
+    #Account Information
+    authenticated   = db.Column(db.Boolean)
+    active          = db.Column(db.Boolean)
+    admin           = db.Column(db.Boolean)
+
+    def __init__(self, username, email, password, \
+                fname, lname, \
+                authenticated=True, active=True, admin=False):
+        self.username = username
+        self.email = email
+        self.set_password(password)
+        self.fname = fname
+        self.lname = lname
+        self.authenticated = authenticated
+        self.active = active
+        self.admin = admin
+
+    def __repr__(self):
+        return '<User: %r>' % (self.username)
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    def is_authenticated(self):
+        return self.authenticated
+
+    def is_active(self):
+        return self.active
+
+    def is_anonymous(self):
+        return False
+
+    def is_admin(self):
+        return self.admin
+
+    def get_id(self):
+        return unicode(int(self.id))
+
+@login_manager.user_loader
+def load_user(userid):
+    return User.query.filter_by(id=userid).first()
+
+#Override default login anon user to provide implementation
+#of methods that might be called on an anonymous user
+class Anonymous(AnonymousUser):
+    def is_admin(self):
+        return False
+
+class Workout(db.Model):
+    __tablename__ = 'Workout'
+    id              = db.Column(db.Integer, primary_key=True)
+    user_id         = db.Column(db.Integer, db.ForeignKey('User.id'))
+    exercise_id     = db.Column(db.Integer, db.ForeignKey('Exercise.id'))
+    exercise        = db.relationship('Exercise', backref='workouts')
+    units           = db.Column(db.Integer)
+    extra_credit    = db.Column(db.String(100))
+    date            = db.Column(db.Date)
+    is_pr           = db.Column(db.Boolean)
+
+    def __init__(self, uid, eid, units, ec, date):
+        self.user_id        = uid
+        self.exercise_id    = eid
+        self.units          = units
+        self.extra_credit   = ec
+        self.date           = date
+        self.is_pr          = self.is_new_pr(units)
+
+    def is_new_pr(self, units):
+        curr_pr = get_current_pr(self.user_id, self.exercise_id)
+        if curr_pr != None:
+            return units > curr_pr.units
+        else:
+            return True
+
+####GLOBAL METHODS RETURNING WORKOUTS#### 
+def get_current_pr(uid, eid):
+        curr_pr = Workout.query.filter_by(user_id=uid, exercise_id=eid).\
+            order_by(Workout.units.desc()).first()
+        return curr_pr
+
+class Exercise(db.Model):
+    __tablename__ = 'Exercise'
+    id            = db.Column(db.Integer, primary_key=True)
+    name          = db.Column(db.String(100))
+    uom           = db.Column(db.String(100))
+    description   = db.Column(db.String(100))
+
+    def __init__(self, name, uom, description):
+        self.name          = name
+        self.uom           = uom
+        self.description   = description
+
+    def __repr__(self):
+        return "<Exercise: %r, %r>" % (self.id, self.name)
+
+
+class LiftExercise(Exercise):
+    reps        = db.Column(db.Integer)
+    weight      = db.Column(db.Integer)
+
+    def __init__(self, reps, weight):
+        self.reps = reps
+        self.weight = weight
+
+class DistExercise(Exercise):
+    dist        = db.Column(db.Float)
+    time        = db.Column(db.Time)
+
+    def __init__(self, dist, time):
+        self.dist = dist
+        self.time = time
+
+

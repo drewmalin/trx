@@ -1,6 +1,6 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from utilities import db
-from models import Exercise
+from models import Exercise, User
 
 def seed(reset):
 
@@ -22,4 +22,4 @@ def seed(reset):
 
         db.session.commit()
 
-        
+
