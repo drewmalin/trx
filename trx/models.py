@@ -14,6 +14,8 @@ class User(db.Model):
     #Personal Information
     fname           = db.Column(db.String(20), nullable=False)
     lname           = db.Column(db.String(20))
+    dob             = db.Column(db.Date)
+    gender          = db.Column(db.Integer)
 
     #Trx information!
     workouts        = db.relationship('Workout', backref='user')
@@ -24,20 +26,19 @@ class User(db.Model):
     active          = db.Column(db.Boolean)
     admin           = db.Column(db.Boolean)
 
-    def __init__(self, username, email, password, \
-                fname, lname, \
+    def __init__(self, email, password, \
                 authenticated=True, active=True, admin=False):
-        self.username = username
         self.email = email
         self.set_password(password)
-        self.fname = fname
-        self.lname = lname
         self.authenticated = authenticated
         self.active = active
         self.admin = admin
 
     def __repr__(self):
-        return '<User: %r>' % (self.username)
+        return '<User: %r %r (%r)>' % (self.fname, self.lname, self.email)
+
+    def displayName(self):
+        return self.fname
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -135,3 +136,4 @@ class DistExercise(Exercise):
         self.time = time
 
 
+GENDERS = {'MALE' : 0, 'FEMALE' : 1}

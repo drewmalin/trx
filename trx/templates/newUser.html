@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block body %}
+    <script>
+        $(function () {
+            $( "#datepicker" ).datepicker();
+        });
+    </script>
 	<form action="{{ url_for('new_user') }}" method=post>
 			<dl>
-				<dt>Username: 
-				<dd><input type=text name=username /><br>
 				<dt>Email: 
 				<dd><input type=text name=email /><br>
 				<dt>Password: 
@@ -14,6 +17,16 @@
 				<dd><input type=text name=fname /><br>
 				<dt>Last Name: 
 				<dd><input type=text name=lname /><br>
+				<dt>Date of Birth: 
+				<dd><input type=date name=dob /><br>
+				<dt>Gender: 
+				<dd><label class="radio inline">
+				        <input type=radio  name=genderRadios id=male value=male /> Male
+				    </label>
+				    <label class="radio inline">
+				        <input type=radio name=genderRadios id= male value=female /> Female
+				    </label><br />
+				<br />
 				<dd><input type=submit value=Submit />
 			</dl>
 	</form>

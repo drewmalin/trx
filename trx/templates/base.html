@@ -34,7 +34,7 @@
 					<div class="row-fluid">
 						{% if current_user.is_authenticated() %}
 						<div class="span11">
-							<h4>Current user: {{current_user.username}}</h4>
+							<h4>Current user: {{current_user.displayName()}}</h4>
 						</div>
 						<div class="span1">
 							<h4>
